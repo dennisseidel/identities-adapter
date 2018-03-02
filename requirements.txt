@@ -1,0 +1,6 @@
+connexion
+Flask
+pyjwt
+boto3
+cryptography
+ujson

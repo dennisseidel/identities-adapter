@@ -1,0 +1,158 @@
+swagger: '2.0'
+info:
+  description: Manages the identity of a digital marketplace
+  version: 1.0.0
+  title: Identities
+  contact:
+    email: den.seidel@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: virtserver.swaggerhub.com
+basePath: /
+schemes:
+  - https
+paths:
+  /identities/{identity-id}/clients:
+    post:
+      summary: Adds a client of an identity.
+      description: https://auth0.com/docs/api/management/v2#!/Clients/post_clients
+      parameters:
+        - in: path
+          name: identity-id
+          type: string
+          description: The id of the identity.
+          required: true
+        - in: body
+          name: client
+          description: "Client item data"
+          required: false
+          schema:
+            type: object
+            required:
+              - client_name
+              - client_description
+            properties:
+              client_name:
+                type: string
+                example: "Peffermiza Broker Frontend"
+              client_description:
+                type: string
+                example: "This is the the frontend app for brokers."
+              allowed_callback_urls:
+                type: array
+                items:
+                  type: string
+                  example: 'http://localhost:3000/callback'
+              allowed_logout_urls:
+                type: array
+                items:
+                  type: string
+                  example: 'http://localhost:3000/logout'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+        400:
+          description: "invalid input, object invalid"
+        409:
+          description: "an existing item already exists"
+      security:
+      - oauth2:
+        - "https://api.d10l.de/identities:write"
+    get:
+      summary: Gets the clients of an identity.
+      description: https://auth0.com/docs/api/management/v2#!/Clients/get_clients
+      parameters:
+        - in: path
+          name: identity-id
+          type: string
+          description: The id of the identity.
+          required: true
+      produces:
+        - application/json
+      responses:
+        200:
+          description: A list of clients of the identity
+          schema:
+              type: object
+              properties:
+                clients:
+                  type: array
+                  items:
+                    $ref: '#/definitions/Client'
+        400:
+          description: "bad input parameter"
+      security:
+      - oauth2:
+        - "https://api.d10l.de/identities:read"
+  /identities/{identity-id}/clients/{client-id}:
+    patch:
+      summary: Update the client of an identity
+      description: https://auth0.com/docs/api/management/v2#!/Clients/patch_clients_by_id
+      parameters: 
+        - in: path
+          name: identity-id
+          type: string
+          description: The id of the identity.
+          required: true
+        - in: path
+          name: client-id
+          type: string
+          description: The id of the client of the identity.
+          required: true
+        - in: body
+          name: client
+          schema:
+            $ref: '#/definitions/Client'
+      responses:
+        200:
+          description: OK
+      security: 
+        - oauth2: 
+          - "https://api.d10l.de/identities:write"
+securityDefinitions:
+  oauth2:
+    type: oauth2
+    authorizationUrl: 'https://d10l.eu.auth0.com/authorize'
+    tokenUrl: 'https://d10l.eu.auth0.com/oauth/token'
+    flow: accessCode
+    scopes:
+      'https://api.d10l.de/identities:write': Access right needed to write to the identity service.
+      'https://api.d10l.de/identities:read': Access right needed to read from the identity service.
+definitions:
+  Client:
+    type: object
+    required:
+      - client_id
+      - client_name
+      - date_created  
+      - client_secret
+      - allowed_callback_urls
+      - allowed_logout_urls
+    properties:
+      client_id:
+        type: string
+        example: 94YJaDlR5QDpaS7Em6aC02_gj6kA1Q_G
+      client_name:
+        type: string
+        example: 'Peffermiza Broker Frontend'
+      date_created:
+        type: string
+        format: int32
+        example: '2016-08-29T09:12:33.001Z'
+      client_secret:
+        type: string
+        example: 94YJaDlR5QDpaS7Em6aC02_gj6kA1Q_G
+      allowed_callback_urls: 
+        type: array
+        items:
+          type: string
+          example: 'http://localhost:3000/callback'
+      allowed_logout_urls:
+        type: array
+        items:
+          type: string
+          example: 'http://localhost:3000/logout'
+      
