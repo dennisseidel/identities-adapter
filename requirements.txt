@@ -4,3 +4,4 @@ pyjwt
 boto3
 cryptography
 ujson
+flask_cors
