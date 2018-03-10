@@ -5,19 +5,30 @@ services:
     image: swaggerapi/swagger-editor
     ports:
       - "80:8080"
-  consumer-service:
-    image: consumer-service:latest
+  identities-service:
+    image: identities-service:latest
     build: .
     environment:
       - MODE=prod
       - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
       - AWS_DEFAULT_REGION=eu-central-1
+      - MONGODB_USERNAME=$MONGODB_USERNAME
+      - MONGODB_PASSWORD=$MONGODB_PASSWORD
     volumes:
       - .:/code
     ports:
       - "9090:5000"
     command: connexion run swagger/swagger.yaml --mock=all
+  mongodb:
+    image: 'bitnami/mongodb:latest'
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGODB_ROOT_PASSWORD=$MONGODB_ROOT_PASSWORD
+      - MONGODB_USERNAME=$MONGODB_USERNAME
+      - MONGODB_PASSWORD=$MONGODB_PASSWORD
+      - MONGODB_DATABASE=identities
 networks:
   default:
     external:

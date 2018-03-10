@@ -1,6 +1,13 @@
 import connexion
 import requests
 import json
+import urllib.parse
+import os
+from pymongo import MongoClient
+
+username= urllib.parse.quote_plus(os.environ['MONGODB_USERNAME'])
+password = urllib.parse.quote_plus(os.environ['MONGODB_PASSWORD'])
+mdb_client = MongoClient('mongodb://%s:%s@mongodb:27017/identities' % (username, password))
 
 def post(identityid, client):
   # TODO check if token is in cache and only call auth0 if not available or expired 
@@ -30,6 +37,15 @@ def post(identityid, client):
   res = requests.post(endpoint,json=request_body,headers=headers).json()
   # save in a key value store under the identityid the array of clients including everything needed to display in the portal
   # [client_id, client_name, client_description, date-created]
+  identities = mdb_client['identities']
+  identity = identities.identity
+  identity_data = {
+    'title': 'Python and MongoDB',
+    'content': 'PyMongo is fun, you guys',
+    'author': 'Scott'
+  }
+  result = identity.insert_one(identity_data)
+  print('One post: {0}'.format(result.inserted_id))
   client = {
     "name": res['name'], 
   }
