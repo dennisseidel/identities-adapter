@@ -10,13 +10,14 @@ basePath: /
 schemes:
   - https
 paths:
-  /identities/{identity-id}/clients:
+  /identities/{identityid}/clients:
     post:
       summary: Adds a client of an identity.
       description: https://auth0.com/docs/api/management/v2#!/Clients/post_clients
+      #operationId: identities.clients_post
       parameters:
         - in: path
-          name: identity-id
+          name: identityid
           type: string
           description: The id of the identity.
           required: true
@@ -61,9 +62,10 @@ paths:
     get:
       summary: Gets the clients of an identity.
       description: https://auth0.com/docs/api/management/v2#!/Clients/get_clients
+      #operationId: api.identities.clients_get
       parameters:
         - in: path
-          name: identity-id
+          name: identityid
           type: string
           description: The id of the identity.
           required: true
@@ -84,13 +86,14 @@ paths:
       security:
       - oauth2:
         - "https://api.ecosphere.de/identities:read"
-  /identities/{identity-id}/clients/{client-id}:
+  /identities/{identityid}/clients/{client-id}:
     patch:
       summary: Update the client of an identity
       description: https://auth0.com/docs/api/management/v2#!/Clients/patch_clients_by_id
+      #operationId: api.identities.clients_patch
       parameters: 
         - in: path
-          name: identity-id
+          name: identityid
           type: string
           description: The id of the identity.
           required: true
