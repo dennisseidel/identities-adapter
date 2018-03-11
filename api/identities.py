@@ -9,14 +9,18 @@ from pymongo import MongoClient
 username= urllib.parse.quote_plus(os.environ['MONGODB_USERNAME'])
 password = urllib.parse.quote_plus(os.environ['MONGODB_PASSWORD'])
 mdb_client = MongoClient('mongodb://%s:%s@mongodb:27017/identities' % (username, password))
+auth0_client_id= urllib.parse.quote_plus(os.environ['auth0_client_id'])
+auth0_client_secret= urllib.parse.quote_plus(os.environ['auth0_client_secret'])
+
 
 def post(identityid, client):
+  # TODO check if apigee token is in cache otherwise get new token
   # TODO check if token is in cache and only call auth0 if not available or expired 
   # TODO put this into it's own function
   token_endpoint = "https://d10l.eu.auth0.com/oauth/token"
   token_request_body = {
-    "client_id": "ZT1Gz9XC3gvLa4tPFAz76uZadrkIG1md",
-    "client_secret": "cVijBVMw6kPRI00oiJOS7O3XTn-EzrZKATFCcuBLr7ItlRDeZoPNeM3pVIH9JqWb", 
+    "client_id": auth0_client_id,
+    "client_secret": auth0_client_secret, 
     "audience": "https://d10l.eu.auth0.com/api/v2/",
     "grant_type": "client_credentials"
     }
