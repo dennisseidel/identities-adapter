@@ -83,7 +83,10 @@ def post(identityid, client):
   }
   result = identity.update_one(identity_data, { '$push': { 'clients': client_data}}, upsert=True)
   client = {
-    "name": client_data['client_name'], 
+    "client_id": client_data['client_id'],
+    "client_name": client_data['client_name'],
+    "client_description": client_data['client_description'],
+    "date_created": client_data['date_created']
   }
   return client, 201
 
