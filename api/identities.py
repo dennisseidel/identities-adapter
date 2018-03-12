@@ -8,15 +8,20 @@ from pymongo import MongoClient
 
 username= urllib.parse.quote_plus(os.environ['MONGODB_USERNAME'])
 password = urllib.parse.quote_plus(os.environ['MONGODB_PASSWORD'])
-mdb_client = MongoClient('mongodb://%s:%s@mongodb:27017/identities' % (username, password))
+mongo_url = urllib.parse.quote_plus(os.environ['MONGODB_URL'])
+mdb_client = MongoClient('mongodb://%s:%s@%s/identities' % (username, password, mongo_url))
+auth0_client_id= urllib.parse.quote_plus(os.environ['auth_client_id'])
+auth0_client_secret= urllib.parse.quote_plus(os.environ['auth_client_secret'])
+apigee_client_id= os.environ['apigee_client_id']
+apigee_client_secret= os.environ['apigee_client_secret']
 
 def post(identityid, client):
   # TODO check if token is in cache and only call auth0 if not available or expired 
   # TODO put this into it's own function
   token_endpoint = "https://d10l.eu.auth0.com/oauth/token"
   token_request_body = {
-    "client_id": "ZT1Gz9XC3gvLa4tPFAz76uZadrkIG1md",
-    "client_secret": "cVijBVMw6kPRI00oiJOS7O3XTn-EzrZKATFCcuBLr7ItlRDeZoPNeM3pVIH9JqWb", 
+    "client_id": auth0_client_id,
+    "client_secret": auth0_client_secret, 
     "audience": "https://d10l.eu.auth0.com/api/v2/",
     "grant_type": "client_credentials"
     }
@@ -25,7 +30,6 @@ def post(identityid, client):
   jsonData = response.json()
   access_token = jsonData['access_token']
   # TODO cache this token
-
   # function create client in auth0 
   endpoint = "https://d10l.eu.auth0.com/api/v2/clients"
   request_body = {
@@ -35,20 +39,51 @@ def post(identityid, client):
     "allowed_logout_urls": client['allowed_logout_urls']
   }
   headers = {"Authorization":"Bearer " + access_token}
-  res = requests.post(endpoint,json=request_body,headers=headers).json()
+  auth0_client_created = requests.post(endpoint,json=request_body,headers=headers).json()
+  # TODO check if apigee token is in cache otherwise get new token
+  apigee_token_endpoint = "https://login.apigee.com/oauth/token"
+  apigee_token_request_body = {
+    'username': apigee_client_id,
+    'password': apigee_client_secret, 
+    'grant_type': 'password'
+  }
+  apigee_token_headers = {
+    'Authorization': 'Basic ZWRnZWNsaTplZGdlY2xpc2VjcmV0'
+  }
+  r = requests.post(apigee_token_endpoint, data=apigee_token_request_body, headers=apigee_token_headers)
+  jsonData = r.json()
+  apigee_access_token=jsonData['access_token']
+  # get the email from the profiledb and add it to the request 
+  apigee_endpoint="https://api.enterprise.apigee.com/v1/organizations/denseidel-trial/developers/den.seidel@gmail.com/apps"
+  apigee_add_app_request_body= {
+    "name": client['client_name'],
+    #"callbackUrl" : "https://url-for-3-legged-oauth/"
+  }
+  apigee_add_app_request_headers = {
+    "Authorization": "Bearer " + apigee_access_token,
+    "Content-Type": "application/json",
+  }
+  r = requests.post(apigee_endpoint, json=apigee_add_app_request_body, headers=apigee_add_app_request_headers)
+  # update the clientid and client secret with the one recieved from the IDM
+  apigee_update_client_credentials_endpoint = 'https://api.enterprise.apigee.com/v1/organizations/denseidel-trial/developers/%s/apps/%s/keys/create' % ('den.seidel@gmail.com', client['client_name'])
+  apigee_update_client_credentials_request_body = {
+    "consumerKey": auth0_client_created['client_id'], 
+    "consumerSecret": auth0_client_created['client_secret']
+  }
+  apigee_updated_client_credentials = requests.post(apigee_update_client_credentials_endpoint,json=apigee_update_client_credentials_request_body,headers=apigee_add_app_request_headers)
   # save in a key value store under the identityid the array of clients including everything needed to display in the portal
   identities = mdb_client['identities']
   identity = identities.identity
   identity_data = { '_id': identityid }
   client_data = {
-    'client_id': res['client_id'],
-    'client_name': res['name'],
-    'client_description': res['description'],
+    'client_id': auth0_client_created['client_id'],
+    'client_name': auth0_client_created['name'],
+    'client_description': auth0_client_created['description'],
     'date_created': datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
   }
   result = identity.update_one(identity_data, { '$push': { 'clients': client_data}}, upsert=True)
   client = {
-    "name": res['name'], 
+    "name": client_data['client_name'], 
   }
   return client, 201
 
