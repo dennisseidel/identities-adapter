@@ -51,7 +51,9 @@ paths:
         - application/json
       responses:
         200:
-          description: OK
+          description: The data of the new client
+          schema:
+            $ref: '#/definitions/Client'
         400:
           description: "invalid input, object invalid"
         409:
