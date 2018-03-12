@@ -88,7 +88,18 @@ def post(identityid, client):
   return client, 201
 
 def get(identityid):
-  return 201
+  print(identityid)
+  # get the data for the identityid from the profile db
+  identities = mdb_client['identities']
+  identity = identities.identity
+  result = identity.find_one({"_id": identityid})
+  clients = {
+    "clients": []
+  }
+  for client in result["clients"]:
+    clients['clients'].append(client) 
+    #{'client_id': 'yecR7Dprg7tbip4P3d4gAbcnW6leQcqG', 'client_name': 'test', 'client_description': 'test', 'date_created': '2018-03-11T19:41:14'}
+  return clients, 201
 
 def patch(identityid, identity):
   return 201
