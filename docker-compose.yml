@@ -15,6 +15,11 @@ services:
       - AWS_DEFAULT_REGION=eu-central-1
       - MONGODB_USERNAME=$MONGODB_USERNAME
       - MONGODB_PASSWORD=$MONGODB_PASSWORD
+      - MONGODB_URL=mongodb:27017
+      - auth_client_id=$auth_client_id
+      - auth_client_secret=$auth_client_secret
+      - apigee_client_id=$apigee_client_id
+      - apigee_client_secret=$apigee_client_secret
     volumes:
       - .:/code
     ports:

@@ -30,3 +30,19 @@ pip install -r requirements.txt
 ### Deploy and Run
 
 It is suggested to use the docker container for your deployment using the container runtime of your choice.
+
+We save the environment config: 
+
+```
+# config for mongodb
+export MONGODB_USERNAME=sampleUser
+export MONGODB_PASSWORD=samplePassword
+export MONGODB_ROOT_PASSWORD=samplePassword
+export MONGODB_URL=http://localhost:27017
+# config apigee
+export apigee_client_id=user@sample.com
+export apigee_client_secret=samplePassword
+#config auth0
+export auth_client_id=dsfdfndfernd34fdfn3234djfdf
+export auth_client_secret=ldfjn3f3o23nf23lfj0j23fn2lfn23nf232nf23nf2nfn32fn2ffn2
+```
