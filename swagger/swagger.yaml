@@ -128,9 +128,6 @@ definitions:
       - client_id
       - client_name
       - date_created  
-      - client_secret
-      - allowed_callback_urls
-      - allowed_logout_urls
     properties:
       client_id:
         type: string
@@ -138,6 +135,9 @@ definitions:
       client_name:
         type: string
         example: 'Peffermiza Broker Frontend'
+      client_description:
+        type: string
+        example: 'The frontend client for our new insurance platform.'
       date_created:
         type: string
         format: int32
