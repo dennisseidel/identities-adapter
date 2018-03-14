@@ -14,9 +14,9 @@ auth0_client_id= urllib.parse.quote_plus(os.environ['auth_client_id'])
 auth0_client_secret= urllib.parse.quote_plus(os.environ['auth_client_secret'])
 apigee_client_id= os.environ['apigee_client_id']
 apigee_client_secret= os.environ['apigee_client_secret']
-auth0_endpoint = os.environ['auth0_endpoint'] # https://d10l.eu.auth0.com
-apigee_management_endpoint = os.environ['apigee_management_endpoint'] # https://api.enterprise.apigee.com/v1/organizations/denseidel-trial
-apigee_auth_endpoint = os.environ['apigee_auth_endpoint'] # https://login.apigee.com/oauth/token
+auth0_endpoint = os.environ['auth0_endpoint'] 
+apigee_management_endpoint = os.environ['apigee_management_endpoint']
+apigee_auth_endpoint = os.environ['apigee_auth_endpoint']
 
 def get_idp_access_token():
   # TODO check if token is in cache and only call auth0 if not available or expired
@@ -100,7 +100,7 @@ def save_client_to_profiledb(client, identityid):
   }
   return client
 
-def post(identityid, client):
+def clients_post(identityid, client):
   idp_access_token = get_idp_access_token()
   idp_created_client = create_client_in_idp(idp_access_token,client)
   apigw_access_token = get_apigw_access_token()
@@ -108,7 +108,7 @@ def post(identityid, client):
   client = save_client_to_profiledb(idp_created_client, identityid)
   return client, 201
 
-def get(identityid):
+def clients_get(identityid):
   # get the data for the identityid from the profile db
   identities = mdb_client['identities']
   identity = identities.identity
@@ -120,5 +120,11 @@ def get(identityid):
     clients['clients'].append(client) 
   return clients, 201
 
-def patch(identityid, identity):
+def clients_patch(identityid, identity):
+  return 201
+
+def register_developer(identityid, developer):
+  return 201
+
+def identities_get(identityid):
   return 201
