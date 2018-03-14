@@ -64,8 +64,9 @@ def get_apigw_access_token():
 def create_client_in_apigw(access_token, client):
   # get the email from the profiledb and add it to the request 
   endpoint="%s/developers/den.seidel@gmail.com/apps" % (apigee_management_endpoint)
+  print(client)
   request_body= {
-    "name": client['name'],
+    "name": client['name']
   }
   headers = {
     "Authorization": "Bearer " + access_token,
@@ -73,7 +74,7 @@ def create_client_in_apigw(access_token, client):
   }
   r = requests.post(endpoint, json=request_body, headers=headers)
   # update the clientid and client secret with the one recieved from the IDM
-  endpoint = '%s/developers/%s/apps/%s/keys/create' % (apigee_management_endpoint, 'den.seidel@gmail.com', client['client_name'])
+  endpoint = '%s/developers/%s/apps/%s/keys/create' % (apigee_management_endpoint, 'den.seidel@gmail.com', client['client_id'])
   request_body = {
     "consumerKey": client['client_id'], 
     "consumerSecret": client['client_secret']
@@ -92,13 +93,7 @@ def save_client_to_profiledb(client, identityid):
     'date_created': datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
   }
   result = identity.update_one(identity_data, { '$push': { 'clients': client_data}}, upsert=True)
-  client = {
-    "client_id": client_data['client_id'],
-    "client_name": client_data['client_name'],
-    "client_description": client_data['client_description'],
-    "date_created": client_data['date_created']
-  }
-  return client
+  return client_data
 
 def clients_post(identityid, client):
   idp_access_token = get_idp_access_token()
