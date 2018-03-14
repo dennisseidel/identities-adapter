@@ -42,7 +42,10 @@ export MONGODB_URL=http://localhost:27017
 # config apigee
 export apigee_client_id=user@sample.com
 export apigee_client_secret=samplePassword
+export apigee_management_endpoint=https://api.enterprise.apigee.com/v1/organizations/denseidel-trial
+export apigee_auth_endpoint=https://login.apigee.com/oauth/token
 #config auth0
 export auth_client_id=dsfdfndfernd34fdfn3234djfdf
 export auth_client_secret=ldfjn3f3o23nf23lfj0j23fn2lfn23nf232nf23nf2nfn32fn2ffn2
+export auth0_endpoint=https://d10l.eu.auth0.com
 ```

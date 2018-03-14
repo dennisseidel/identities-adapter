@@ -10,11 +10,69 @@ basePath: /
 schemes:
   - https
 paths:
+  /identities/{identityid}:
+    get:
+      summary: Get the profile data for an identity.
+      operationId: api.identities.identities_get
+      parameters:
+        - in: path
+          name: identityid
+          type: string
+          description: The id of the identity.
+          required: true
+      produces: 
+        - application/json
+      responses:
+        200:
+          description: The profile data for an identity.
+          schema:
+            $ref: '#/definitions/Identity'
+  /identities/{identityid}/developerid:
+    post:
+      summary: Register a developer id for the identity.
+      operationId: api.identities.register_developer
+      parameters:
+        - in: path
+          name: identityid
+          type: string
+          description: The id of the identity.
+          required: true
+        - in: body
+          name: developer
+          description: "Developer item data"
+          required: true
+          schema:
+            type: object
+            required:
+              - developer_email
+              - developer_first_name
+              - developer_last_name
+              - developer_user_name
+            properties:
+              developer_email:
+                type: string
+                example: "jsmith@sample.com"
+              developer_first_name:
+                type: string
+                example: "John"
+              developer_last_name:
+                type: string
+                example: "Smith"
+              developer_user_name:
+                type: string
+                example: "jsmith"
+      responses:
+        201:
+          description: Identity has been registered as a developer.
+        400:
+          description: "invalid input, object invalid"
+        409:
+          description: "an existing item already exists"
   /identities/{identityid}/clients:
     post:
       summary: Adds a client of an identity.
       description: https://auth0.com/docs/api/management/v2#!/Clients/post_clients
-      #operationId: identities.clients_post
+      operationId: api.identities.clients_post
       parameters:
         - in: path
           name: identityid
@@ -64,7 +122,7 @@ paths:
     get:
       summary: Gets the clients of an identity.
       description: https://auth0.com/docs/api/management/v2#!/Clients/get_clients
-      #operationId: api.identities.clients_get
+      operationId: api.identities.clients_get
       parameters:
         - in: path
           name: identityid
@@ -92,7 +150,7 @@ paths:
     patch:
       summary: Update the client of an identity
       description: https://auth0.com/docs/api/management/v2#!/Clients/patch_clients_by_id
-      #operationId: api.identities.clients_patch
+      operationId: api.identities.clients_patch
       parameters: 
         - in: path
           name: identityid
@@ -157,4 +215,29 @@ definitions:
         items:
           type: string
           example: 'http://localhost:3000/logout'
-      
+  Identity:
+    type: object
+    required:
+      - identity_id
+      - date_created  
+    properties:
+      identity_id:
+        type: string
+        example: auth0|94YJaDlR5QDpaS7Em6aC02_gj6kA1Q_G
+      date_created:
+        type: string
+        format: int32
+        example: '2016-08-29T09:12:33.001Z'
+      developer_id:
+        type: string
+        example: e3e3ae38-28b2-4e40-a208-24a2d3a1c150
+      allowed_callback_urls: 
+        type: array
+        items:
+          type: string
+          example: 'http://localhost:3000/callback'
+      allowed_logout_urls:
+        type: array
+        items:
+          type: string
+          example: 'http://localhost:3000/logout'
