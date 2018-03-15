@@ -13,7 +13,7 @@ paths:
   /identities/{identityid}:
     get:
       summary: Get the profile data for an identity.
-      operationId: api.identities.identities_get
+      operationId: api.identities.identity_get
       parameters:
         - in: path
           name: identityid
@@ -219,25 +219,10 @@ definitions:
     type: object
     required:
       - identity_id
-      - date_created  
     properties:
       identity_id:
         type: string
         example: auth0|94YJaDlR5QDpaS7Em6aC02_gj6kA1Q_G
-      date_created:
-        type: string
-        format: int32
-        example: '2016-08-29T09:12:33.001Z'
       developer_id:
         type: string
         example: e3e3ae38-28b2-4e40-a208-24a2d3a1c150
-      allowed_callback_urls: 
-        type: array
-        items:
-          type: string
-          example: 'http://localhost:3000/callback'
-      allowed_logout_urls:
-        type: array
-        items:
-          type: string
-          example: 'http://localhost:3000/logout'
