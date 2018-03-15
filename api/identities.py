@@ -85,7 +85,9 @@ def save_client_to_profiledb(client, identityid):
   # save in a key value store under the identityid the array of clients including everything needed to display in the portal
   identities = mdb_client['identities']
   identity = identities.identity
-  identity_data = { '_id': identityid }
+  identity_data = { 
+    '_id': identityid
+   }
   client_data = {
     'client_id': client['client_id'],
     'client_name': client['name'],
@@ -103,6 +105,7 @@ def clients_post(identityid, client):
   client = save_client_to_profiledb(idp_created_client, identityid)
   return client, 201
 
+
 def clients_get(identityid):
   # get the data for the identityid from the profile db
   identities = mdb_client['identities']
@@ -115,11 +118,28 @@ def clients_get(identityid):
     clients['clients'].append(client) 
   return clients, 201
 
+
 def clients_patch(identityid, identity):
   return 201
+
 
 def register_developer(identityid, developer):
   return 201
 
-def identities_get(identityid):
-  return 201
+
+def add_to_dict_if_exists(source_dict, key, target_dict):
+  result = source_dict.get(key)
+  if result != None:
+    target_dict[key] = result
+  return target_dict
+
+def identity_get(identityid):
+  # get the data for the identityid from the profile db
+  identities = mdb_client['identities']
+  identity = identities.identity
+  identity_entry = identity.find_one({"_id": identityid})
+  result = {
+    "identity_id": identity_entry['_id']
+  }
+  add_to_dict_if_exists(identity_entry, 'developer_id', result)
+  return result, 201
