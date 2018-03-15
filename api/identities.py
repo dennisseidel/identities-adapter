@@ -130,7 +130,38 @@ def clients_patch(identityid, identity):
   return 201
 
 
-def register_developer(identityid, developer):
+def register_developer(identityid):
+  # getUserinfo / profile
+  access_token = connexion.request.headers['Authorization']
+  endpoint = "%s/userinfo" % (auth0_endpoint)
+  headers = {
+    "Authorization": access_token,
+  }
+  r = requests.get(endpoint, headers=headers)
+  profile = r.json()
+  # generate developer account
+  access_token = get_apigw_access_token()
+  endpoint="%s/developers" % (apigee_management_endpoint)
+  request_body= {
+    "email": profile['name'],
+    "userName": profile['nickname'],
+    "firstName": "NN",
+    "lastName": "NN"
+  }
+  headers = {
+    "Authorization": "Bearer " + access_token,
+    "Content-Type": "application/json",
+  }
+  r = requests.post(endpoint, json=request_body, headers=headers)
+  r = r.json()
+  developer_id = r['developerId']
+  # save developer id in profiledb
+  identities = mdb_client['identities']
+  identity = identities.identity
+  identity_data = { 
+    '_id': identityid
+   }
+  result = identity.update_one(identity_data, { '$set': { 'developer_id': developer_id }}, upsert=True)
   return 201
 
 
