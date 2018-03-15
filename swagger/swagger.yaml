@@ -37,30 +37,6 @@ paths:
           type: string
           description: The id of the identity.
           required: true
-        - in: body
-          name: developer
-          description: "Developer item data"
-          required: true
-          schema:
-            type: object
-            required:
-              - developer_email
-              - developer_first_name
-              - developer_last_name
-              - developer_user_name
-            properties:
-              developer_email:
-                type: string
-                example: "jsmith@sample.com"
-              developer_first_name:
-                type: string
-                example: "John"
-              developer_last_name:
-                type: string
-                example: "Smith"
-              developer_user_name:
-                type: string
-                example: "jsmith"
       responses:
         201:
           description: Identity has been registered as a developer.
