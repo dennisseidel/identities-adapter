@@ -27,6 +27,9 @@ paths:
           description: The profile data for an identity.
           schema:
             $ref: '#/definitions/Identity'
+      security: 
+          - oauth2: 
+            - "https://api.d10l.de/identities:read"
   /identities/{identityid}/developerid:
     post:
       summary: Register a developer id for the identity.
@@ -44,6 +47,9 @@ paths:
           description: "invalid input, object invalid"
         409:
           description: "an existing item already exists"
+      security: 
+        - oauth2: 
+          - "https://api.d10l.de/identities:write"
   /identities/{identityid}/clients:
     post:
       summary: Adds a client of an identity.
@@ -94,7 +100,7 @@ paths:
           description: "an existing item already exists"
       security:
       - oauth2:
-        - "https://api.ecosphere.de/identities:write"
+        - "https://api.d10l.de/identities:write"
     get:
       summary: Gets the clients of an identity.
       description: https://auth0.com/docs/api/management/v2#!/Clients/get_clients
@@ -121,7 +127,7 @@ paths:
           description: "bad input parameter"
       security:
       - oauth2:
-        - "https://api.ecosphere.de/identities:read"
+        - "https://api.d10l.de/identities:read"
   /identities/{identityid}/clients/{client-id}:
     patch:
       summary: Update the client of an identity
@@ -147,16 +153,17 @@ paths:
           description: OK
       security: 
         - oauth2: 
-          - "https://api.ecosphere.de/identities:write"
+          - "https://api.d10l.de/identities:write"
 securityDefinitions:
   oauth2:
     type: oauth2
     authorizationUrl: 'https://ecosphere.eu.auth0.com/authorize'
     tokenUrl: 'https://ecosphere.eu.auth0.com/oauth/token'
+    x-tokenInfoFunc: "lib.auth.checktoken"
     flow: accessCode
     scopes:
-      'https://api.ecosphere.de/identities:write': Access right needed to write to the identity service.
-      'https://api.ecosphere.de/identities:read': Access right needed to read from the identity service.
+      'https://api.d10l.de/identities:write': Access right needed to write to the identity service.
+      'https://api.d10l.de/identities:read': Access right needed to read from the identity service.
 definitions:
   Client:
     type: object
