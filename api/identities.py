@@ -73,12 +73,12 @@ def create_client_in_apigw(access_token, client, developer_id):
   }
   r = requests.post(endpoint, json=request_body, headers=headers)
   # update the clientid and client secret with the one recieved from the IDM
-  endpoint = '%s/developers/%s/apps/%s/keys/create' % (apigee_management_endpoint, developer_id, client['client_id'])
+  endpoint = '%s/developers/%s/apps/%s/keys/create' % (apigee_management_endpoint, developer_id, client['name'])
   request_body = {
     "consumerKey": client['client_id'], 
     "consumerSecret": client['client_secret']
   }
-  requests.post(endpoint,json=request_body,headers=headers)
+  r = requests.post(endpoint,json=request_body,headers=headers)
 
 def save_client_to_profiledb(client, identityid):
   # save in a key value store under the identityid the array of clients including everything needed to display in the portal
@@ -91,7 +91,9 @@ def save_client_to_profiledb(client, identityid):
     'client_id': client['client_id'],
     'client_name': client['name'],
     'client_description': client['description'],
-    'date_created': datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+    'date_created': datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
+    'allowed_callback_urls': client['callbacks'],
+    'allowed_logout_urls': client['allowed_logout_urls']
   }
   result = identity.update_one(identity_data, { '$push': { 'clients': client_data}}, upsert=True)
   return client_data
@@ -126,7 +128,7 @@ def clients_get(identityid):
   return clients, 201
 
 
-def clients_patch(identityid, identity):
+def clients_patch(identityid, clientid, identity):
   return 201
 
 
@@ -180,4 +182,44 @@ def identity_get(identityid):
     "identity_id": identity_entry['_id']
   }
   add_to_dict_if_exists(identity_entry, 'developer_id', result)
+  return result, 201
+
+def get_client_from_apigw(access_token, developer_id, client_name):
+  # developers/{developer_email_or_id}/apps/{app_name}
+  endpoint="%s/developers/%s/apps/%s" % (apigee_management_endpoint, developer_id, client_name)
+  headers = {
+    "Authorization": "Bearer " + access_token,
+    "Content-Type": "application/json",
+  }
+  r = requests.get(endpoint, headers=headers)
+  client = r.json()
+  return client
+
+def get_client_from_profile(identityid,client_name):
+  identities = mdb_client['identities']
+  identity = identities.identity
+  result = identity.find({'_id': identityid, 'clients': {'$elemMatch': {'client_name': client_name}}})
+  return result
+
+def client_get(identityid, clientid):
+  #get profile to get the developer id
+  profile = get_profile(identityid)
+  developer_id = profile['developer_id']
+  #get the access token to access apigee
+  access_token = get_apigw_access_token()
+  #get the client details with [developer_id, access_token, app_id]
+  client = get_client_from_apigw(access_token, developer_id, clientid)
+  #get client data from idp
+  print(profile['clients'])
+  client_profile = list(filter(lambda client: client['client_name'] == clientid, profile['clients']))
+  #return result
+  result = {
+    "allowed_callback_urls": client_profile[0]['allowed_callback_urls'],
+    "allowed_logout_urls": client_profile[0]['allowed_logout_urls'],
+    "client_description": "The frontend client for our new insurance platform.",
+    "client_id": client['credentials'][-1]['consumerKey'],
+    "client_name": client['name'],
+    "client_secret": client['credentials'][-1]['consumerSecret'],
+    "date_created": "2016-08-29T09:12:33.001Z"
+  }
   return result, 201

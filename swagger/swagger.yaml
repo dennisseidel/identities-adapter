@@ -99,8 +99,8 @@ paths:
         409:
           description: "an existing item already exists"
       security:
-      - oauth2:
-        - "https://api.d10l.de/identities:write"
+        - oauth2:
+          - "https://api.d10l.de/identities:write"
     get:
       summary: Gets the clients of an identity.
       description: https://auth0.com/docs/api/management/v2#!/Clients/get_clients
@@ -128,7 +128,31 @@ paths:
       security:
       - oauth2:
         - "https://api.d10l.de/identities:read"
-  /identities/{identityid}/clients/{client-id}:
+  /identities/{identityid}/clients/{clientid}:
+    get:
+      summary: Get the details for a client of an identity.
+      operationId: api.identities.client_get
+      parameters: 
+        - in: path
+          name: identityid
+          type: string
+          description: The id of the identity.
+          required: true
+        - in: path
+          name: clientid
+          type: string
+          description: The NAME of the client (is used as the clientid) of the identity.
+          required: true
+      responses:
+        200:
+          description: 0K
+          schema:
+            $ref: '#/definitions/Client'
+        400:
+          description: "bad input parameter"
+      security: 
+        - oauth2: 
+          - "https://api.d10l.de/identities:read"
     patch:
       summary: Update the client of an identity
       description: https://auth0.com/docs/api/management/v2#!/Clients/patch_clients_by_id
@@ -140,7 +164,7 @@ paths:
           description: The id of the identity.
           required: true
         - in: path
-          name: client-id
+          name: clientid
           type: string
           description: The id of the client of the identity.
           required: true
