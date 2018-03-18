@@ -29,3 +29,8 @@ jobs:
       - run:
           name: Build Docker images
           command: docker-compose -f docker-compose.yml build
+      - run:
+          name: Deploy
+          command: |
+            pip install -r /ecs/requirements.txt
+            python ecs/scripts/setup.js
