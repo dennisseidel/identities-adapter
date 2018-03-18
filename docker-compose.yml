@@ -10,9 +10,6 @@ services:
     build: .
     environment:
       - MODE=prod
-      - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-      - AWS_DEFAULT_REGION=eu-central-1
       - MONGODB_USERNAME=$MONGODB_USERNAME
       - MONGODB_PASSWORD=$MONGODB_PASSWORD
       - MONGODB_URL=mongodb:27017
