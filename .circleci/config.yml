@@ -1,0 +1,31 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: docker:latest
+    working_directory: ~/identities-adapter
+    environment:
+      - NODE_ENV: test
+      - REACT_APP_USERS_SERVICE_URL: http://localhost:3000
+      - REACT_APP_MOVIES_SERVICE_URL: http://localhost:3001
+    steps:
+      - checkout
+      - setup_remote_docker:
+          name: Setup remote docker environment for docker build
+          reusable: true
+          exclusive: false
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --no-cache \
+              py-pip \
+              bash \
+              jq \
+              curl \
+              nodejs
+            pip install \
+              docker-compose \
+              awscli
+      run:
+          name: Build Docker images
+          command: docker-compose -f docker-compose-review.yml build
