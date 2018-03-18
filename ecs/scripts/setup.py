@@ -24,7 +24,9 @@ def get_cluster():
 
 
 cluster = get_cluster()
-if len(cluster['clusters']):
+print(cluster)
+print(len(cluster['clusters']))
+if len(cluster['clusters']) < 0:
   print('Cluster does not exist.')
 else:
-  print('ECS Cluster ->' + cluster['clusters'][0]['clusterName'])
+  print('ECS Cluster -> ' + cluster['clusters'][0]['clusterName'])
