@@ -33,4 +33,4 @@ jobs:
           name: Deploy
           command: |
             pip install -r ecs/requirements.txt
-            python ecs/scripts/setup.js
+            python ecs/scripts/setup.py
