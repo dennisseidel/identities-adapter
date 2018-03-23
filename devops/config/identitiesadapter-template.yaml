@@ -42,7 +42,7 @@ spec:
     spec:
       containers:
       - name: identities
-        image: dennisseidel/identitiesadapter:0.0.1
+        image: dennisseidel/identitiesadapter:0.0.2
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9090
