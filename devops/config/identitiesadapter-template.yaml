@@ -77,7 +77,7 @@ spec:
     spec:
       containers:
       - name: identities
-        image: dennisseidel/dockerstarter:$CANARY_VERSION
+        image: dennisseidel/identitiesadapter:$CANARY_VERSION
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9090
