@@ -2,35 +2,32 @@ version: 2
 jobs:
   build:
     docker:
-      - image: docker:latest
-    working_directory: ~/identities-adapter
+      - image: google/cloud-sdk
     environment:
       - NODE_ENV: test
       - REACT_APP_USERS_SERVICE_URL: http://localhost:3000
       - REACT_APP_MOVIES_SERVICE_URL: http://localhost:3001
     steps:
+      - run:
+          name: Install dependencies
+          command: |
+            apt-get install -qqy ruby jq
+            gem install bump
       - checkout
       - setup_remote_docker:
           name: Setup remote docker environment for docker build
           reusable: true
           exclusive: false
+      - run: which gcloud
       - run:
-          name: Install dependencies
-          command: |
-            apk add --no-cache \
-              py-pip \
-              bash \
-              jq \
-              curl \
-              nodejs
-            pip install \
-              docker-compose \
-              awscli
+          name: Setup Pipeline Image
+          command: ./devops/machine-setup.sh
       - run:
-          name: Build Docker images
-          command: docker-compose -f docker-compose.yml build
+          name: Setup cluster
+          command: ./devops/gke-cluster-setup.sh
       - run:
-          name: Deploy
-          command: |
-            pip install -r ecs/requirements.txt
-            python ecs/scripts/setup.py
+          name: Install Istio to cluster
+          command: ./devops/install-istio.sh
+      - run:
+          name: Build and Deploy App
+          command: ./devops/build-and-deploy.sh

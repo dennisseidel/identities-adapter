@@ -1,0 +1,125 @@
+# Copyright 2017 Istio Authors
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+##################################################################################################
+# Hello Adapter PROD - UPDATE BY HAND OR WITH A RELEASE JOB
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello
+  labels:
+    app: hello
+spec:
+  ports:
+  - port: 9090
+    name: http
+  selector:
+    app: hello
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hello-v1
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hello
+        version: v1
+    spec:
+      containers:
+      - name: hello
+        image: dennisseidel/dockerstarter:0.0.5
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9090
+---
+##################################################################################################
+# Hello Adapter Canery
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello
+  labels:
+    app: hello
+spec:
+  ports:
+  - port: 9090
+    name: http
+  selector:
+    app: hello
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hello-canary
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hello
+        version: canary
+    spec:
+      containers:
+      - name: hello
+        image: dennisseidel/dockerstarter:0.0.7
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9090
+---
+##################################################################################################
+# RouteRule Hello Adapter
+##################################################################################################
+apiVersion: config.istio.io/v1alpha2
+kind: RouteRule
+metadata:
+  name: mirror-idetities-traffic-to-canery
+spec:
+  destination:
+    name: hello
+  precedence: 11
+  route:
+  - labels:
+      version: v1
+    weight: 100
+  - labels: 
+      version: canary
+    weight: 0
+  mirror:
+    name: hello
+    labels:
+      version: canary
+---
+###########################################################################
+# Ingress resource (gateway)
+##########################################################################
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: gateway
+  annotations:
+    kubernetes.io/ingress.class: "istio"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /greeting/.*
+        backend:
+          serviceName: hello
+          servicePort: 9090
+---
