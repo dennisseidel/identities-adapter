@@ -13,77 +13,77 @@
 #   limitations under the License.
 
 ##################################################################################################
-# Hello Adapter PROD - UPDATE BY HAND OR WITH A RELEASE JOB
+# identities Adapter PROD - UPDATE BY HAND OR WITH A RELEASE JOB
 ##################################################################################################
 apiVersion: v1
 kind: Service
 metadata:
-  name: hello
+  name: identities
   labels:
-    app: hello
+    app: identities
 spec:
   ports:
   - port: 9090
     name: http
   selector:
-    app: hello
+    app: identities
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: hello-v1
+  name: identities-v1
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: hello
+        app: identities
         version: v1
     spec:
       containers:
-      - name: hello
-        image: dennisseidel/dockerstarter:0.0.5
+      - name: identities
+        image: dennisseidel/identitiesadapter:0.0.1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9090
 ---
 ##################################################################################################
-# Hello Adapter Canery
+# identities Adapter Canery
 ##################################################################################################
 apiVersion: v1
 kind: Service
 metadata:
-  name: hello
+  name: identities
   labels:
-    app: hello
+    app: identities
 spec:
   ports:
   - port: 9090
     name: http
   selector:
-    app: hello
+    app: identities
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: hello-canary
+  name: identities-canary
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: hello
+        app: identities
         version: canary
     spec:
       containers:
-      - name: hello
-        image: dennisseidel/dockerstarter:0.0.7
+      - name: identities
+        image: dennisseidel/dockerstarter:0.0.2
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9090
 ---
 ##################################################################################################
-# RouteRule Hello Adapter
+# RouteRule identities Adapter
 ##################################################################################################
 apiVersion: config.istio.io/v1alpha2
 kind: RouteRule
@@ -91,19 +91,15 @@ metadata:
   name: mirror-idetities-traffic-to-canery
 spec:
   destination:
-    name: hello
+    name: identities
   precedence: 11
   route:
   - labels:
       version: v1
-    weight: 100
+    weight: 0
   - labels: 
       version: canary
-    weight: 0
-  mirror:
-    name: hello
-    labels:
-      version: canary
+    weight: 100
 ---
 ###########################################################################
 # Ingress resource (gateway)
@@ -118,8 +114,8 @@ spec:
   rules:
   - http:
       paths:
-      - path: /greeting/.*
+      - path: /identities/.*
         backend:
-          serviceName: hello
+          serviceName: identities
           servicePort: 9090
 ---
