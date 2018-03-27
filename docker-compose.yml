@@ -17,11 +17,11 @@ services:
       - auth_client_secret=$auth_client_secret
       - apigee_client_id=$apigee_client_id
       - apigee_client_secret=$apigee_client_secret
-    volumes:
-      - .:/code
+      - auth0_endpoint=$auth0_endpoint
+      - apigee_management_endpoint=$apigee_management_endpoint
+      - apigee_auth_endpoint=$apigee_auth_endpoint
     ports:
       - "9090:5000"
-    command: connexion run swagger/swagger.yaml --mock=all
   mongodb:
     image: 'bitnami/mongodb:latest'
     ports:
