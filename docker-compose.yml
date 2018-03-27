@@ -12,7 +12,7 @@ services:
       - MODE=prod
       - MONGODB_USERNAME=$MONGODB_USERNAME
       - MONGODB_PASSWORD=$MONGODB_PASSWORD
-      - MONGODB_URL=mongodb:27017
+      - MONGODB_URL=$MONGODB_URL
       - auth_client_id=$auth_client_id
       - auth_client_secret=$auth_client_secret
       - apigee_client_id=$apigee_client_id
