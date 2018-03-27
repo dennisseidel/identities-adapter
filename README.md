@@ -35,10 +35,10 @@ We save the environment config:
 
 ```
 # config for mongodb
+export MONGODB_URL= mongodb://sampleUser:samplePassword@localhost:27017/identities // mongodb://mongodb:27017/test
 export MONGODB_USERNAME=sampleUser
 export MONGODB_PASSWORD=samplePassword
 export MONGODB_ROOT_PASSWORD=samplePassword
-export MONGODB_URL=http://localhost:27017
 # config apigee
 export apigee_client_id=user@sample.com
 export apigee_client_secret=samplePassword

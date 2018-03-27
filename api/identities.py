@@ -6,10 +6,8 @@ import os
 from datetime import datetime
 from pymongo import MongoClient
 
-username= urllib.parse.quote_plus(os.environ['MONGODB_USERNAME'])
-password = urllib.parse.quote_plus(os.environ['MONGODB_PASSWORD'])
 mongo_url = urllib.parse.quote_plus(os.environ['MONGODB_URL'])
-mdb_client = MongoClient('mongodb://%s:%s@%s/identities' % (username, password, mongo_url))
+mdb_client = MongoClient(mongo_url)
 auth0_client_id= urllib.parse.quote_plus(os.environ['auth_client_id'])
 auth0_client_secret= urllib.parse.quote_plus(os.environ['auth_client_secret'])
 apigee_client_id= os.environ['apigee_client_id']

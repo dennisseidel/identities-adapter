@@ -44,6 +44,46 @@ spec:
       - name: identities
         image: dennisseidel/identitiesadapter:0.0.2
         imagePullPolicy: IfNotPresent
+        env:
+          - name: MODE
+            value: prod
+          - name: auth0_endpoint
+            value: https://d10l.eu.auth0.com
+          - name: apigee_management_endpoint
+            value: https://api.enterprise.apigee.com/v1/organizations/denseidel-trial
+          - name: apigee_auth_endpoint
+            value: https://api.enterprise.apigee.com/v1/organizations/denseidel-trial
+          - name: MONGODB_URL
+            valueFrom:
+              secretKeyRef:
+                name: identities-secrets
+                key: MONGODB_URL
+          - name: apigee_client_id
+            valueFrom:
+              secretKeyRef:
+                name: identities-secrets
+                key: apigee_client_id
+          - name: apigee_client_secret
+            valueFrom:
+              secretKeyRef:
+                name: identities-secrets
+                key: apigee_client_secret
+          - name: auth_client_id
+            valueFrom:
+              secretKeyRef:
+                name: identities-secrets
+                key: auth_client_id
+          - name: auth_client_secret
+            valueFrom:
+              secretKeyRef:
+                name: identities-secrets
+                key: auth_client_secret
+          - name: apigee_client_id
+            valueFrom:
+              secretKeyRef:
+                name: identities-secrets
+                key: apigee_client_id
+          
         ports:
         - containerPort: 9090
 ---
@@ -79,6 +119,45 @@ spec:
       - name: identities
         image: dennisseidel/identitiesadapter:$CANARY_VERSION
         imagePullPolicy: IfNotPresent
+        env:
+          - name: MODE
+            value: prod
+          - name: auth0_endpoint
+            value: https://d10l.eu.auth0.com
+          - name: apigee_management_endpoint
+            value: https://api.enterprise.apigee.com/v1/organizations/denseidel-trial
+          - name: apigee_auth_endpoint
+            value: https://api.enterprise.apigee.com/v1/organizations/denseidel-trial
+          - name: MONGODB_URL
+            valueFrom:
+              secretKeyRef:
+                name: identities-secrets
+                key: MONGODB_URL
+          - name: apigee_client_id
+            valueFrom:
+              secretKeyRef:
+                name: identities-secrets
+                key: apigee_client_id
+          - name: apigee_client_secret
+            valueFrom:
+              secretKeyRef:
+                name: identities-secrets
+                key: apigee_client_secret
+          - name: auth_client_id
+            valueFrom:
+              secretKeyRef:
+                name: identities-secrets
+                key: auth_client_id
+          - name: auth_client_secret
+            valueFrom:
+              secretKeyRef:
+                name: identities-secrets
+                key: auth_client_secret
+          - name: apigee_client_id
+            valueFrom:
+              secretKeyRef:
+                name: identities-secrets
+                key: apigee_client_id
         ports:
         - containerPort: 9090
 ---
@@ -103,7 +182,7 @@ spec:
 ---
 ###########################################################################
 # Ingress resource (gateway)
-##########################################################################
+###########################################################################
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -118,4 +197,60 @@ spec:
         backend:
           serviceName: identities
           servicePort: 9090
+---
+###########################################################################
+# Service Mongodb
+###########################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  labels:
+    app: mongodb
+spec:
+  ports:
+  - port: 27017
+    name: mongo
+  selector:
+    app: mongodb
+---
+###########################################################################
+# Deployment Mongodb
+###########################################################################
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mongodb-v1
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongodb
+        version: v1
+    spec:
+      containers:
+      - name: mongodb 
+        image: bitnami/mongodb:latest
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: MONGODB_DATABASE
+            value: identities
+          - name: MONGODB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: identities-secrets
+                key: MONGODB_USERNAME
+          - name: MONGODB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: identities-secrets
+                key: MONGODB_PASSWORD
+          - name: MONGODB_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: identities-secrets
+                key: MONGODB_ROOT_PASSWORD
+        ports:
+        - containerPort: 27017
 ---
