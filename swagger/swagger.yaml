@@ -183,7 +183,7 @@ securityDefinitions:
     type: oauth2
     authorizationUrl: 'https://ecosphere.eu.auth0.com/authorize'
     tokenUrl: 'https://ecosphere.eu.auth0.com/oauth/token'
-    x-tokenInfoFunc: "lib.auth.checktoken"
+    x-tokenInfoFunc: "api.auth.checktoken"
     flow: accessCode
     scopes:
       'https://api.d10l.de/identities:write': Access right needed to write to the identity service.

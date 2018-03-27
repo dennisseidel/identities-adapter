@@ -7,4 +7,4 @@ RUN apk add --no-cache alpine-sdk libffi-dev openssl-dev
 RUN pip install -r requirements.txt
 
 EXPOSE 9090
-CMD ["python", "./app.py"]
+CMD ["python", "/code/app.py"]
