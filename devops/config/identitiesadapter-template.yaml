@@ -181,24 +181,6 @@ spec:
     weight: 100
 ---
 ###########################################################################
-# Ingress resource (gateway)
-###########################################################################
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: gateway
-  annotations:
-    kubernetes.io/ingress.class: "istio"
-spec:
-  rules:
-  - http:
-      paths:
-      - path: /identities/.*
-        backend:
-          serviceName: identities
-          servicePort: 9090
----
-###########################################################################
 # Service Mongodb
 ###########################################################################
 apiVersion: v1
