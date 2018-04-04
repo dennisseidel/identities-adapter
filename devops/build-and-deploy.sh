@@ -10,7 +10,7 @@ IMAGE=identitiesadapter
 LATEST_GIT_HASH=$(git log -1 --format=%h)
 
 # Donwload latest version and set path variable to istio for istioctl e.g. "$PATH:/Users/den/repo/test/istio-0.6.0/bin"
-# curl -L https://git.io/getLatestIstio | sh -
+curl -L https://git.io/getLatestIstio | sh -
 export ISTIO_DIR="$(find . -type d -name istio-*.*  -exec basename {} \;)"
 
 # ensure we're up to date
