@@ -117,7 +117,7 @@ spec:
     spec:
       containers:
       - name: identities
-        image: dennisseidel/identitiesadapter:0.0.9
+        image: dennisseidel/identitiesadapter:0.0.10
         imagePullPolicy: IfNotPresent
         env:
           - name: MODE
@@ -179,24 +179,6 @@ spec:
   - labels: 
       version: canary
     weight: 100
----
-###########################################################################
-# Ingress resource (gateway)
-###########################################################################
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: gateway
-  annotations:
-    kubernetes.io/ingress.class: "istio"
-spec:
-  rules:
-  - http:
-      paths:
-      - path: /identities/.*
-        backend:
-          serviceName: identities
-          servicePort: 9090
 ---
 ###########################################################################
 # Service Mongodb
