@@ -117,17 +117,17 @@ spec:
     spec:
       containers:
       - name: identities
-        image: dennisseidel/identitiesadapter:0.0.10
+        image: dennisseidel/identitiesadapter:0.0.11
         imagePullPolicy: IfNotPresent
         env:
           - name: MODE
             value: prod
           - name: auth0_endpoint
-            value: https://d10l.eu.auth0.com
+            value: http://d10l.eu.auth0.com:443
           - name: apigee_management_endpoint
-            value: https://api.enterprise.apigee.com/v1/organizations/denseidel-trial
+            value: http://api.enterprise.apigee.com:443/v1/organizations/denseidel-trial
           - name: apigee_auth_endpoint
-            value: https://api.enterprise.apigee.com/v1/organizations/denseidel-trial
+            value: http://api.enterprise.apigee.com:443/v1/organizations/denseidel-trial
           - name: MONGODB_URL
             valueFrom:
               secretKeyRef:
