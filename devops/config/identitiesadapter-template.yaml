@@ -78,12 +78,6 @@ spec:
               secretKeyRef:
                 name: identities-secrets
                 key: auth_client_secret
-          - name: apigee_client_id
-            valueFrom:
-              secretKeyRef:
-                name: identities-secrets
-                key: apigee_client_id
-          
         ports:
         - containerPort: 9090
 ---
@@ -153,11 +147,6 @@ spec:
               secretKeyRef:
                 name: identities-secrets
                 key: auth_client_secret
-          - name: apigee_client_id
-            valueFrom:
-              secretKeyRef:
-                name: identities-secrets
-                key: apigee_client_id
         ports:
         - containerPort: 9090
 ---
