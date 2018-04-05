@@ -42,7 +42,8 @@ docker push $USERNAME/$IMAGE:latest
 docker push $USERNAME/$IMAGE:$version
 
 # install app
-kubectl apply -f <($PWD/$ISTIO_DIR/bin/istioctl kube-inject -f devops/config/identitiesadapter.yaml)
+cluster_ip=$(gcloud container clusters describe marketplace-istio --zone=us-east1-b | grep -e clusterIpv4Cidr -e servicesIpv4Cidr | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" | paste -sd "," -)
+kubectl apply -f <($PWD/$ISTIO_DIR/bin/istioctl kube-inject -f devops/config/identitiesadapter.yaml --includeIPRanges={$cluster_ip})
 # kubectl apply -f <(istioctl kube-inject -f $ISTIO_DIR/samples/bookinfo/kube/bookinfo.yaml)
 
 # Confirm all services and pods are correctly defined and running

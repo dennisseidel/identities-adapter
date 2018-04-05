@@ -123,11 +123,11 @@ spec:
           - name: MODE
             value: prod
           - name: auth0_endpoint
-            value: http://d10l.eu.auth0.com:443
+            value: https://d10l.eu.auth0.com
           - name: apigee_management_endpoint
-            value: http://api.enterprise.apigee.com:443/v1/organizations/denseidel-trial
+            value: https://api.enterprise.apigee.com/v1/organizations/denseidel-trial
           - name: apigee_auth_endpoint
-            value: http://api.enterprise.apigee.com:443/v1/organizations/denseidel-trial
+            value: https://api.enterprise.apigee.com/v1/organizations/denseidel-trial
           - name: MONGODB_URL
             valueFrom:
               secretKeyRef:
