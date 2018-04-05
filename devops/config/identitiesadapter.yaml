@@ -117,7 +117,7 @@ spec:
     spec:
       containers:
       - name: identities
-        image: dennisseidel/identitiesadapter:0.0.16
+        image: dennisseidel/identitiesadapter:0.0.17
         imagePullPolicy: IfNotPresent
         env:
           - name: MODE
