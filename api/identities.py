@@ -25,11 +25,11 @@ def get_idp_access_token():
     "audience": "%s/api/v2/" % (auth0_endpoint),
     "grant_type": "client_credentials"
     }
-  print('REQUEST: ' + request_body)
+  print(request_body)
   headers = { 'content-type': "application/json" }
   response = requests.post(endpoint, json=request_body, headers=headers)
   jsonData = response.json()
-  print('JSON_DATA: ' + jsonData)
+  print(jsonData)
   access_token = jsonData['access_token']
   # TODO cache this token
   return access_token
