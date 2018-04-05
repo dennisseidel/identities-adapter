@@ -19,15 +19,18 @@ apigee_auth_endpoint = os.environ['apigee_auth_endpoint']
 def get_idp_access_token():
   # TODO check if token is in cache and only call auth0 if not available or expired
   endpoint= "%s/oauth/token" % (auth0_endpoint)
+  print(endpoint)
   request_body = {
     "client_id": auth0_client_id,
     "client_secret": auth0_client_secret, 
     "audience": "%s/api/v2/" % (auth0_endpoint),
     "grant_type": "client_credentials"
     }
+  print(request_body)
   headers = { 'content-type': "application/json" }
   response = requests.post(endpoint, json=request_body, headers=headers)
   jsonData = response.json()
+  print(jsonData)
   access_token = jsonData['access_token']
   # TODO cache this token
   return access_token

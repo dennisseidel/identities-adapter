@@ -49,3 +49,12 @@ export auth_client_id=dsfdfndfernd34fdfn3234djfdf
 export auth_client_secret=ldfjn3f3o23nf23lfj0j23fn2lfn23nf232nf23nf2nfn32fn2ffn2
 export auth0_endpoint=https://d10l.eu.auth0.com
 ```
+
+
+Connect to Istio MongoDB with port forwarding
+
+```
+kubectl -n default port-forward \
+$(kubectl -n default get pod -l app=mongodb -o jsonpath='{.items[0].metadata.name}') \
+27017:27017 &
+```
