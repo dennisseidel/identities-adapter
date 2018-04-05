@@ -50,7 +50,7 @@ def _get_public_keys() -> dict:
     Returns:
         Mapping of key ID's ("kid" fields) to RSA public keys usable by PyJWT.
     """
-    public_keys_url = 'https://d10l.eu.auth0.com/.well-known/jwks.json'
+    public_keys_url = 'http://d10l.eu.auth0.com:443/.well-known/jwks.json'
     jwk_set = requests.get(public_keys_url).json()
     public_keys = {}
     for key_dict in jwk_set['keys']:
