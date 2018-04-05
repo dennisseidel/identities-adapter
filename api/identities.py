@@ -57,6 +57,7 @@ def get_apigw_access_token():
     'Authorization': 'Basic ZWRnZWNsaTplZGdlY2xpc2VjcmV0'
   }
   r = requests.post(endpoint, data=request_body, headers=headers)
+  r.raise_for_status()
   jsonData = r.json()
   access_token=jsonData['access_token']
   return access_token
@@ -72,6 +73,7 @@ def create_client_in_apigw(access_token, client, developer_id):
     "Content-Type": "application/json",
   }
   r = requests.post(endpoint, json=request_body, headers=headers)
+  r.raise_for_status()
   # update the clientid and client secret with the one recieved from the IDM
   endpoint = '%s/developers/%s/apps/%s/keys/create' % (apigee_management_endpoint, developer_id, client['name'])
   request_body = {
@@ -79,6 +81,7 @@ def create_client_in_apigw(access_token, client, developer_id):
     "consumerSecret": client['client_secret']
   }
   r = requests.post(endpoint,json=request_body,headers=headers)
+  r.raise_for_status()
 
 def save_client_to_profiledb(client, identityid):
   # save in a key value store under the identityid the array of clients including everything needed to display in the portal
@@ -140,6 +143,7 @@ def register_developer(identityid):
     "Authorization": access_token,
   }
   r = requests.get(endpoint, headers=headers)
+  r.raise_for_status()
   profile = r.json()
   # generate developer account
   access_token = get_apigw_access_token()
@@ -155,6 +159,7 @@ def register_developer(identityid):
     "Content-Type": "application/json",
   }
   r = requests.post(endpoint, json=request_body, headers=headers)
+  r.raise_for_status()
   r = r.json()
   developer_id = r['developerId']
   # save developer id in profiledb
@@ -192,6 +197,7 @@ def get_client_from_apigw(access_token, developer_id, client_name):
     "Content-Type": "application/json",
   }
   r = requests.get(endpoint, headers=headers)
+  r.raise_for_status()
   client = r.json()
   return client
 
