@@ -53,6 +53,8 @@ def get_apigw_access_token():
     'password': apigee_client_secret, 
     'grant_type': 'password'
   }
+  print('REQUEST:')
+  print(request_body)
   headers = {
     'Authorization': 'Basic ZWRnZWNsaTplZGdlY2xpc2VjcmV0'
   }
