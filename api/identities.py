@@ -3,11 +3,10 @@ import requests
 import json
 import urllib.parse
 import os
-import pickle
 from datetime import datetime
 from pymongo import MongoClient
 
-mongo_url = urllib.parse.quote_plus(os.environ['MONGODB_URL'])
+mongo_url = os.environ['MONGODB_URL']
 mdb_client = MongoClient(mongo_url)
 auth0_client_id= urllib.parse.quote_plus(os.environ['auth_client_id'])
 auth0_client_secret= urllib.parse.quote_plus(os.environ['auth_client_secret'])
@@ -47,30 +46,19 @@ def create_client_in_idp(access_token, client):
 def get_apigw_access_token():
   # TODO check if apigee token is in cache otherwise get new token
   endpoint = apigee_auth_endpoint
-  print('ENDPOINT')
-  print(endpoint)
   request_body = {
     'username': apigee_client_id,
     'password': apigee_client_secret, 
     'grant_type': 'password'
   }
-  print('REQUEST:')
-  print(request_body)
   headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
     'Accept': 'application/json;charset=utf-8',
     'Authorization': 'Basic ZWRnZWNsaTplZGdlY2xpc2VjcmV0'
   }
-  print('HEADER')
-  print(headers)
   r = requests.post(endpoint, data=request_body, headers=headers)
-  print('REQUEST:')
-  print(pickle.dumps(r.request))
-  print('TEXT')
-  print(r.text)
   r.raise_for_status()
   jsonData = r.json()
-  print(jsonData)
   access_token=jsonData['access_token']
   return access_token
 
