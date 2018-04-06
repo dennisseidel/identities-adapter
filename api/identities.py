@@ -61,6 +61,7 @@ def get_apigw_access_token():
   r = requests.post(endpoint, data=request_body, headers=headers)
   r.raise_for_status()
   jsonData = r.json()
+  print(jsonData)
   access_token=jsonData['access_token']
   return access_token
 
