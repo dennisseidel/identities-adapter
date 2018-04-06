@@ -64,6 +64,8 @@ def get_apigw_access_token():
   r = requests.post(endpoint, data=request_body, headers=headers)
   print('REQUEST:')
   print(pickle.dumps(r.request))
+  print('TEXT')
+  print(r.text)
   r.raise_for_status()
   jsonData = r.json()
   print(jsonData)
@@ -153,8 +155,6 @@ def register_developer(identityid):
   r = requests.get(endpoint, headers=headers)
   r.raise_for_status()
   profile = r.json()
-  print('PROFILE')
-  print(profile)
   # generate developer account
   access_token = get_apigw_access_token()
   endpoint="%s/developers" % (apigee_management_endpoint)
