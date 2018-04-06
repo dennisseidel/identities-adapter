@@ -3,6 +3,7 @@ import requests
 import json
 import urllib.parse
 import os
+import pickle
 from datetime import datetime
 from pymongo import MongoClient
 
@@ -54,9 +55,15 @@ def get_apigw_access_token():
   print('REQUEST:')
   print(request_body)
   headers = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Accept': 'application/json;charset=utf-8',
     'Authorization': 'Basic ZWRnZWNsaTplZGdlY2xpc2VjcmV0'
   }
+  print('HEADER')
+  print(headers)
   r = requests.post(endpoint, data=request_body, headers=headers)
+  print('REQUEST:')
+  print(pickle.dumps(r.request))
   r.raise_for_status()
   jsonData = r.json()
   print(jsonData)
