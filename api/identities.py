@@ -47,6 +47,8 @@ def create_client_in_idp(access_token, client):
 def get_apigw_access_token():
   # TODO check if apigee token is in cache otherwise get new token
   endpoint = apigee_auth_endpoint
+  print('ENDPOINT')
+  print(endpoint)
   request_body = {
     'username': apigee_client_id,
     'password': apigee_client_secret, 
