@@ -4,6 +4,7 @@ import json
 import urllib.parse
 import os
 from datetime import datetime
+from connexion import NoContent
 from pymongo import MongoClient
 
 mongo_url = os.environ['MONGODB_URL']
@@ -191,6 +192,15 @@ def identity_get(identityid):
   }
   add_to_dict_if_exists(identity_entry, 'developer_id', result)
   return result, 201
+
+def identity_post(identityid, identity):
+  identities = mdb_client['identities']
+  identityEntry = identities.identity
+  filter = { 
+    '_id': identityid
+  }
+  identityEntry.update_one(filter, { '$set': identity }, upsert=True)
+  return NoContent, 201
 
 def get_client_from_apigw(access_token, developer_id, client_name):
   # developers/{developer_email_or_id}/apps/{app_name}

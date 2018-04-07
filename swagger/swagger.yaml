@@ -30,6 +30,29 @@ paths:
       security: 
           - oauth2: 
             - "https://api.d10l.de/identities:read"
+    post:
+      summary: Add profile data for an identity.
+      operationId: api.identities.identity_post
+      parameters:
+        - in: path
+          name: identityid
+          type: string
+          description: The id of the identity.
+          required: true
+        - in: body
+          name: identity
+          description: The profile data to save under the identity.
+          required: true
+          schema: 
+            $ref: '#/definitions/Identity'
+      produces:
+        - application/json
+      responses:
+        201:
+          description: The profile for an identity has been created.
+      security:
+        - oauth2:
+          - "https://api.d10l.de/identities:write"
   /identities/{identityid}/developerid:
     post:
       summary: Register a developer id for the identity.

@@ -58,3 +58,70 @@ kubectl -n default port-forward \
 $(kubectl -n default get pod -l app=mongodb -o jsonpath='{.items[0].metadata.name}') \
 27017:27017 &
 ```
+
+
+Auth0 Rules Code to create identity on first login:
+```
+function (user, context, done) {
+  user.app_metadata = user.app_metadata || {};
+  if (user.app_metadata.recordedAsLead) {
+    return done(null,user,context);
+  }
+
+  
+  //Populate the variables below with appropriate values
+  var Auth0_CLIENT_ID = '29AbPa1fgzLU7EGInA7j5NnE6NX1WZuo';
+  var Auth0_CLIENT_SECRET = 'qZCM5uo2fxfmte9dDOO5T9Q04oZJQcRJg5sjH1SVakz0h-jwLH6OYQrfhpz90GOw';
+  var audiance = 'https://api.d10l.de';
+
+  getAccessToken(Auth0_CLIENT_ID, Auth0_CLIENT_SECRET, audiance,
+    function(r) {
+      if (!r.access_token) {
+        return;
+      }
+      var url = 'http://api.d10l.de/identities/' + user.user_id;
+      createIdentity(url, r.access_token, function (e, result) {
+        if (e || !result || !result.identity_id) {
+          return;
+        }
+
+        user.app_metadata.recordedAsLead = true;
+        auth0.users.updateAppMetadata(user.user_id, user.app_metadata);
+      });
+    });
+
+  function createIdentity(url, access_token, callback){
+    //Can use many more fields
+    var data = {
+      identity_id: user.user_id
+    };
+
+    request.post({
+      url: url,
+      headers: {
+        "Authorization": "Bearer " + access_token
+      },
+      json: data
+      }, function(e,r,b) {
+        return callback(e, b);
+      });
+  }
+  
+  //Obtains a SFCOM access_token with user credentials
+  function getAccessToken(client_id, client_secret, audience, callback) {
+    request.post({
+      url: 'https://d10l.eu.auth0.com/oauth/token',
+      form: {
+        grant_type: 'client_credentials',
+        client_id: client_id,
+        client_secret: client_secret,
+        audience: audience
+      }}, function(e,r,b) {
+        return callback(JSON.parse(b));
+      });
+  }
+
+  // don’t wait for the SF API call to finish, return right away (the request will continue on the sandbox)`
+  done(null, user, context);
+}
+```
