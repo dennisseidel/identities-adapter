@@ -43,6 +43,14 @@ paths:
       responses:
         201:
           description: Identity has been registered as a developer.
+          schema:
+            type: object
+            required:
+              - developer_id
+            properties:
+              developer_id:
+                type: string
+                example: "18861a2c-c96c-452b-a9b3-45bbb7373739"
         400:
           description: "invalid input, object invalid"
         409:

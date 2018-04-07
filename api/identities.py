@@ -168,8 +168,11 @@ def register_developer(identityid):
   identity_data = { 
     '_id': identityid
    }
-  result = identity.update_one(identity_data, { '$set': { 'developer_id': developer_id }}, upsert=True)
-  return 201
+  identity.update_one(identity_data, { '$set': { 'developer_id': developer_id }}, upsert=True)
+  result = {
+    "developer_id": developer_id
+  }
+  return result, 201
 
 
 def add_to_dict_if_exists(source_dict, key, target_dict):
