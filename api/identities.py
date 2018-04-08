@@ -272,3 +272,40 @@ def clients_delete(identityid, clientid):
   identities = mdb_client['identities']
   identity = identities.identity
   identity.update({"_id": identityid}, { '$pull': {'clients': {'client_id': clientid}}} )
+
+def client_secret_patch(identityid, clientid):
+  #get profile to get the developer id
+  profile = get_profile(identityid)
+  developer_id = profile['developer_id']
+  # get the client profile from the profile db to get the name used in apigee
+  client_profile = list(filter(lambda client: client['client_id'] == clientid, profile['clients']))
+  client_name = client_profile[0]['client_name']
+  # update the client secret in auth0
+  idp_access_token = get_idp_access_token()
+  headers = {"Authorization":"Bearer " + idp_access_token}
+  r = requests.post("%s/api/v2/clients/%s/rotate-secret" % (auth0_endpoint, clientid), headers=headers)
+  r.raise_for_status()
+  new_client_secret = r.json()['client_secret']
+  print(new_client_secret)
+  # update the client secret in apigee (delete old one, create new one? / not necessary as the clientid is the key in apigee)
+  access_token = get_apigw_access_token()
+  endpoint="%s/developers/%s/apps/%s/keys/%s" % (apigee_management_endpoint, developer_id, client_name, clientid)
+  headers = {
+    "Authorization": "Bearer " + access_token,
+    "Content-Type": "application/json",
+  }
+  r = requests.delete(endpoint, headers=headers)
+  r.raise_for_status()
+  # update the clientid and client secret with the one recieved from the IDM
+  endpoint = '%s/developers/%s/apps/%s/keys/create' % (apigee_management_endpoint, developer_id, client_name)
+  request_body = {
+    "consumerKey": clientid, 
+    "consumerSecret": new_client_secret
+  }
+  r = requests.post(endpoint,json=request_body,headers=headers)
+  r.raise_for_status()
+  response = {
+    "client_secret": new_client_secret
+  }
+  return response, 200
+

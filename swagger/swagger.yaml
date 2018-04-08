@@ -226,6 +226,37 @@ paths:
       responses:
         200:
           description: The client was deleted sucessfully.
+  /identities/{identityid}/clients/{clientid}/secrets:
+    patch:
+      summary: Update the client secret.
+      operationId: api.identities.client_secret_patch
+      parameters: 
+        - in: path
+          name: identityid
+          type: string
+          description: The id of the identity.
+          required: true
+        - in: path
+          name: clientid
+          type: string
+          description: The NAME of the client (is used as the clientid) of the identity.
+          required: true
+      responses:
+        200:
+          description: 0K
+          schema:
+            type: object
+            required:
+              - client_secret
+            properties:
+              client_secret:
+                type: string
+                example: "94YJaDlR5QDpaS7Em6aC02_gj6kA1Q_G"
+        400:
+          description: "bad input parameter"
+      security: 
+        - oauth2: 
+          - "https://api.d10l.de/identities:write"
 securityDefinitions:
   oauth2:
     type: oauth2
