@@ -75,6 +75,12 @@ def create_client_in_apigw(access_token, client, developer_id):
   }
   r = requests.post(endpoint, json=request_body, headers=headers)
   r.raise_for_status()
+  # delete default api key 
+  created_app = r.json()
+  apikey = created_app['credentials'][0]['consumerKey']
+  endpoint="%s/developers/%s/apps/%s/keys/%s" % (apigee_management_endpoint, developer_id, client['name'], apikey)
+  r = requests.delete(endpoint, json=request_body, headers=headers)
+  r.raise_for_status()
   # update the clientid and client secret with the one recieved from the IDM
   endpoint = '%s/developers/%s/apps/%s/keys/create' % (apigee_management_endpoint, developer_id, client['name'])
   request_body = {
@@ -222,11 +228,13 @@ def client_get(identityid, clientid):
   #get profile to get the developer id
   profile = get_profile(identityid)
   developer_id = profile['developer_id']
+  # get the client profile from the profile db to get the name used in apigee
+  client_profile = list(filter(lambda client: client['client_id'] == clientid, profile['clients']))
+  client_name = client_profile[0]['client_name']
   #get the access token to access apigee
   access_token = get_apigw_access_token()
   #get the client details with [developer_id, access_token, app_id]
-  client = get_client_from_apigw(access_token, developer_id, clientid)
-  client_profile = list(filter(lambda client: client['client_name'] == clientid, profile['clients']))
+  client = get_client_from_apigw(access_token, developer_id, client_name)
   #return result
   result = {
     "allowed_callback_urls": client_profile[0]['allowed_callback_urls'],
@@ -238,3 +246,29 @@ def client_get(identityid, clientid):
     "date_created": client_profile[0]['date_created']
   }
   return result, 201
+
+def clients_delete(identityid, clientid):
+  #get profile to get the developer id
+  profile = get_profile(identityid)
+  developer_id = profile['developer_id']
+  # get the client profile from the profile db to get the name used in apigee
+  client_profile = list(filter(lambda client: client['client_id'] == clientid, profile['clients']))
+  client_name = client_profile[0]['client_name']
+  # delete client in apigee
+  access_token = get_apigw_access_token()
+  endpoint="%s/developers/%s/apps/%s" % (apigee_management_endpoint, developer_id, client_name)
+  headers = {
+    "Authorization": "Bearer " + access_token,
+    "Content-Type": "application/json",
+  }
+  r = requests.delete(endpoint, headers=headers)
+  r.raise_for_status()
+  # delete client in auth0
+  idp_access_token = get_idp_access_token()
+  headers = {"Authorization":"Bearer " + idp_access_token}
+  requests.delete("%s/api/v2/clients/%s" % (auth0_endpoint, clientid), headers=headers)
+  r.raise_for_status()
+  # delete client from profiledb
+  identities = mdb_client['identities']
+  identity = identities.identity
+  identity.update({"_id": identityid}, { '$pull': {'clients': {'client_id': clientid}}} )

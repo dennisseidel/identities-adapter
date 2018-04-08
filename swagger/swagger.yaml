@@ -209,6 +209,23 @@ paths:
       security: 
         - oauth2: 
           - "https://api.d10l.de/identities:write"
+    delete:
+      summary: Delete a client of an identity
+      operationId: api.identities.clients_delete
+      parameters:
+        - in: path
+          name: identityid
+          type: string
+          description: The id of the identity.
+          required: true
+        - in: path
+          name: clientid
+          type: string
+          description: The id of the client of the identity.
+          required: true
+      responses:
+        200:
+          description: The client was deleted sucessfully.
 securityDefinitions:
   oauth2:
     type: oauth2
