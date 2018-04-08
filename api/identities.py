@@ -226,8 +226,6 @@ def client_get(identityid, clientid):
   access_token = get_apigw_access_token()
   #get the client details with [developer_id, access_token, app_id]
   client = get_client_from_apigw(access_token, developer_id, clientid)
-  #get client data from idp
-  print(profile['clients'])
   client_profile = list(filter(lambda client: client['client_name'] == clientid, profile['clients']))
   #return result
   result = {
@@ -237,6 +235,6 @@ def client_get(identityid, clientid):
     "client_id": client['credentials'][-1]['consumerKey'],
     "client_name": client['name'],
     "client_secret": client['credentials'][-1]['consumerSecret'],
-    "date_created": "2016-08-29T09:12:33.001Z"
+    "date_created": client_profile[0]['date_created']
   }
   return result, 201
