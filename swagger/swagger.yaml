@@ -212,8 +212,8 @@ paths:
 securityDefinitions:
   oauth2:
     type: oauth2
-    authorizationUrl: 'https://ecosphere.eu.auth0.com/authorize'
-    tokenUrl: 'https://ecosphere.eu.auth0.com/oauth/token'
+    authorizationUrl: 'https://d10l.eu.auth0.com/authorize'
+    tokenUrl: 'https://d10l.eu.auth0.com/oauth/token'
     x-tokenInfoFunc: "api.auth.checktoken"
     flow: accessCode
     scopes:

@@ -125,11 +125,9 @@ def clients_get(identityid):
   identity = identities.identity
   result = identity.find_one({"_id": identityid})
   clients = {
-    "clients": []
+    "clients": result.get("clients", [])
   }
-  for client in result["clients"]:
-    clients['clients'].append(client) 
-  return clients, 201
+  return clients, 200
 
 
 def clients_patch(identityid, clientid, identity):
